@@ -34,6 +34,37 @@ app.get('/pitches', async (req, res) => {
   res.render('pitches/index.ejs', { pitches });
 });
 
+//Create
+app.get('/pitches/new', (req, res) => {
+  res.render('pitches/new.ejs');
+});
+app.post('/pitches', async (req, res) => {
+  const pitch = new Pitch(req.body.pitch);
+  await pitch.save();
+  res.redirect(`/pitches/${pitch.id}`);
+});
+
+//Update
+app.get('/pitches/:id/edit', async (req, res) => {
+  const { id } = req.params;
+  const pitch = await Pitch.findById(id);
+  res.render('pitches/edit.ejs', { pitch });
+});
+app.put('/pitches/:id', async (req, res) => {
+  const { id } = req.params;
+  const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
+    new: true,
+  });
+  res.redirect(`/pitches/${newPitch.id}`);
+});
+
+//Delete
+app.delete('/pitches/:id', async (req, res) => {
+  const { id } = req.params;
+  await Pitch.findByIdAndDelete(id);
+  res.redirect('/pitches');
+});
+
 //Show page
 app.get('/pitches/:id', async (req, res) => {
   const { id } = req.params;

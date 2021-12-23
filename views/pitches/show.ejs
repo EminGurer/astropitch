@@ -13,5 +13,10 @@
       <li><%= pitch.description %></li>
       <li><%= pitch.location %></li>
     </ul>
+    <a href="/pitches">Home</a>
+    <a href="/pitches/<%= pitch.id %>/edit">Edit</a>
+    <form action="/pitches/<%= pitch.id %>?_method=DELETE" method="POST">
+      <button>Delete</button>
+    </form>
   </body>
 </html>
