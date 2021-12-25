@@ -1,12 +1,23 @@
 <% layout('layouts/boilerplate.ejs') %>
 <!-- This line will inject the hmtl code into boilerplate.ejs -->
-<div>
-  <a href="/pitches/new">Add new pitch</a>
-</div>
 <ul>
   <% for(pitch of pitches){ %>
-  <li>
-    <a href="/pitches/<%= pitch.id %>"><%= pitch.title %></a>
-  </li>
+  <div class="card mb-3">
+    <div class="row">
+      <div class="col-md-4">
+        <img class="img-fluid" src="<%= pitch.image %>" alt="pitch-image" />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title"><%= pitch.title %></h5>
+          <p class="card-text"><%= pitch.description %></p>
+          <p class="card-text">
+            <small class="text-muted"><%= pitch.location %></small>
+          </p>
+          <a href="/pitches/<%= pitch.id %>" class="btn btn-primary">Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <% } %>
 </ul>
