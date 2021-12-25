@@ -1,42 +1,61 @@
 <% layout('layouts/boilerplate.ejs') %>
 <!-- This line will inject the hmtl code into boilerplate.ejs -->
-<form action="/pitches/<%= pitch.id %>?_method=PUT" method="POST">
-  <div>
-    <label for="title">Title</label>
-    <input
-      type="text"
-      name="pitch[title]"
-      id="title"
-      value="<%= pitch.title %>"
-    />
+<div class="row">
+  <h1 class="text-center">Edit Pitch</h1>
+  <div class="col-6 offset-3">
+    <form action="/pitches" method="POST">
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input
+          class="form-control"
+          type="text"
+          name="pitch[title]"
+          id="title"
+          value="<%= pitch.title %>"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="price">Price</label>
+        <input
+          class="form-control"
+          type="number"
+          name="pitch[price]"
+          id="price"
+          value="<%= pitch.price %>"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="location">Location</label>
+        <input
+          class="form-control"
+          type="text"
+          name="pitch[location]"
+          id="location"
+          value="<%= pitch.location %>"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="image">İmage URL</label>
+        <input
+          class="form-control"
+          type="text"
+          name="pitch[image]"
+          id="image"
+          value="<%= pitch.image %>"
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <textarea
+          class="form-control"
+          name="pitch[description]"
+          id="description"
+        >
+<%= pitch.description %></textarea
+        >
+      </div>
+      <button class="btn btn-success">Save</button>
+      <a class="btn btn-danger" href="/pitches">Back to pitches</a>
+    </form>
   </div>
-  <div>
-    <label for="price">Price</label>
-    <input
-      type="number"
-      name="pitch[price]"
-      id="price"
-      value="<%= pitch.price %>"
-    />
-  </div>
-  <div>
-    <label for="description">Description</label>
-    <input
-      type="text"
-      name="pitch[description]"
-      id="description"
-      value="<%= pitch.description %>"
-    />
-  </div>
-  <div>
-    <label for="location">Location</label>
-    <input
-      type="text"
-      name="pitch[location]"
-      id="location"
-      value="<%= pitch.location %>"
-    />
-  </div>
-  <button>Save</button>
-</form>
-<a href="/pitches">Home</a>
+</div>
