@@ -5,6 +5,7 @@ const PORT = 8080;
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const Pitch = require('./models/pitches');
+const ejsMate = require('ejs-mate');
 
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
@@ -23,6 +24,7 @@ app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
 //View engine and views
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -77,6 +79,7 @@ app.get('*', (req, res) => {
   res.send("This page doesn't exist");
 });
 
+//App start
 app.listen(PORT, () => {
   console.log(`Express app is listening on http://localhost:${PORT}`);
 });
