@@ -6,8 +6,11 @@ const PitchSchema = new Schema({
     type: String,
     required: true,
   },
-  price: {
+  image: {
     type: String,
+  },
+  price: {
+    type: Number,
     required: true,
   },
   description: {

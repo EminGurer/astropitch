@@ -13,9 +13,11 @@ db.once('open', () => {
 const seedDB = async () => {
   await Pitch.deleteMany({});
   for (seed of seeds) {
+    const price = Math.floor(Math.random() * 100 + 100);
     const pitch = new Pitch({
       title: seed.STADIUM,
-      price: 160,
+      image: 'https://source.unsplash.com/collection/9920102/400x400',
+      price: price,
       description: seed.ADRESS,
       location: seed.CITY,
     });
