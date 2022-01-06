@@ -38,7 +38,7 @@ app.get(
   wrapAsync(async (req, res) => {
     const pitches = await Pitch.find({});
     if (!pitches) {
-      throw new AppError('There is no pitches', 404);
+      throw new AppError('There is problem finding pitches', 404);
     }
     res.render('pitches/index.ejs', { pitches });
   })
@@ -52,7 +52,10 @@ app.post(
   '/pitches',
   wrapAsync(async (req, res) => {
     const pitch = new Pitch(req.body.pitch);
-    await pitch.save();
+    const save = await pitch.save();
+    if (!save) {
+      throw new AppError('There is problem while saving the pitch', 500);
+    }
     res.redirect(`/pitches/${pitch.id}`);
   })
 );
@@ -63,6 +66,9 @@ app.get(
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const pitch = await Pitch.findById(id);
+    if (!pitch) {
+      throw new AppError('There is no such a pitch', 404);
+    }
     res.render('pitches/edit.ejs', { pitch });
   })
 );
@@ -73,6 +79,9 @@ app.put(
     const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
       new: true,
     });
+    if (!newPitch) {
+      throw new AppError('There was a problem while updating', 500);
+    }
     res.redirect(`/pitches/${newPitch.id}`);
   })
 );
