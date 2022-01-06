@@ -3,7 +3,12 @@
 <div class="row">
   <h1 class="text-center">Edit Pitch</h1>
   <div class="col-6 offset-3">
-    <form action="/pitches" method="POST" novalidate class="bs-validate">
+    <form
+      action="/pitches/<%= pitch.id %>?_method=PUT"
+      method="POST"
+      novalidate
+      class="bs-validate"
+    >
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
         <input
