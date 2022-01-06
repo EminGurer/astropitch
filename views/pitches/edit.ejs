@@ -3,10 +3,11 @@
 <div class="row">
   <h1 class="text-center">Edit Pitch</h1>
   <div class="col-6 offset-3">
-    <form action="/pitches" method="POST">
+    <form action="/pitches" method="POST" novalidate class="bs-validate">
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
         <input
+          required
           class="form-control"
           type="text"
           name="pitch[title]"
@@ -17,6 +18,7 @@
       <div class="mb-3">
         <label class="form-label" for="price">Price</label>
         <input
+          required
           class="form-control"
           type="number"
           name="pitch[price]"
@@ -27,6 +29,7 @@
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
         <input
+          required
           class="form-control"
           type="text"
           name="pitch[location]"
@@ -37,6 +40,7 @@
       <div class="mb-3">
         <label class="form-label" for="image">İmage URL</label>
         <input
+          required
           class="form-control"
           type="text"
           name="pitch[image]"
@@ -47,6 +51,7 @@
       <div class="mb-3">
         <label class="form-label" for="description">Description</label>
         <textarea
+          required
           class="form-control"
           name="pitch[description]"
           id="description"
@@ -55,7 +60,7 @@
         >
       </div>
       <button class="btn btn-success">Save</button>
-      <a class="btn btn-danger" href="/pitches">Back to pitches</a>
+      <a class="btn btn-danger" href="/">Back to pitches</a>
     </form>
   </div>
 </div>

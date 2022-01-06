@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const Pitch = require('./models/pitches');
 const ejsMate = require('ejs-mate');
+const wrapAsync = require('./errorUtilities/wrapAsync');
+const AppError = require('./errorUtilities/customError');
 
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
@@ -31,52 +33,85 @@ app.set('views', path.join(__dirname, 'views'));
 //Routes
 
 //All pitches
-app.get('/pitches', async (req, res) => {
-  const pitches = await Pitch.find({});
-  res.render('pitches/index.ejs', { pitches });
-});
+app.get(
+  '/',
+  wrapAsync(async (req, res) => {
+    const pitches = await Pitch.find({});
+    if (!pitches) {
+      throw new AppError('There is no pitches', 404);
+    }
+    res.render('pitches/index.ejs', { pitches });
+  })
+);
 
 //Create
 app.get('/pitches/new', (req, res) => {
   res.render('pitches/new.ejs');
 });
-app.post('/pitches', async (req, res) => {
-  const pitch = new Pitch(req.body.pitch);
-  await pitch.save();
-  res.redirect(`/pitches/${pitch.id}`);
-});
+app.post(
+  '/pitches',
+  wrapAsync(async (req, res) => {
+    const pitch = new Pitch(req.body.pitch);
+    await pitch.save();
+    res.redirect(`/pitches/${pitch.id}`);
+  })
+);
 
 //Update
-app.get('/pitches/:id/edit', async (req, res) => {
-  const { id } = req.params;
-  const pitch = await Pitch.findById(id);
-  res.render('pitches/edit.ejs', { pitch });
-});
-app.put('/pitches/:id', async (req, res) => {
-  const { id } = req.params;
-  const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
-    new: true,
-  });
-  res.redirect(`/pitches/${newPitch.id}`);
-});
+app.get(
+  '/pitches/:id/edit',
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const pitch = await Pitch.findById(id);
+    res.render('pitches/edit.ejs', { pitch });
+  })
+);
+app.put(
+  '/pitches/:id',
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
+      new: true,
+    });
+    res.redirect(`/pitches/${newPitch.id}`);
+  })
+);
 
 //Delete
-app.delete('/pitches/:id', async (req, res) => {
-  const { id } = req.params;
-  await Pitch.findByIdAndDelete(id);
-  res.redirect('/pitches');
-});
+app.delete(
+  '/pitches/:id',
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const del = await Pitch.findByIdAndDelete(id);
+    if (!del) {
+      throw new AppError('Could not delete this pitch', 404);
+    }
+    res.redirect('/');
+  })
+);
 
 //Show page
-app.get('/pitches/:id', async (req, res) => {
-  const { id } = req.params;
-  const pitch = await Pitch.findById(id);
-  res.render('pitches/show.ejs', { pitch });
+app.get(
+  '/pitches/:id',
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const pitch = await Pitch.findById(id);
+    if (!pitch) {
+      throw new AppError('This pitch does not exist', 404);
+    }
+    res.render('pitches/show.ejs', { pitch });
+  })
+);
+
+//Error handler middleware
+app.use((err, req, res, next) => {
+  const { message = 'Something went wrong', status = 500 } = err;
+  res.status(status).send(message);
 });
 
-//Fallback route
-app.get('*', (req, res) => {
-  res.send("This page doesn't exist");
+//404 fallback
+app.use((req, res) => {
+  res.status(404).send("This page doesn't exist");
 });
 
 //App start
