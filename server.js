@@ -8,7 +8,6 @@ const Pitch = require('./models/pitches');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require('./errorUtilities/wrapAsync');
 const AppError = require('./errorUtilities/customError');
-const Joi = require('joi');
 const { pitchJoiSchema } = require('./joiSchemas');
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
