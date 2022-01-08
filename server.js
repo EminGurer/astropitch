@@ -8,7 +8,7 @@ const Pitch = require('./models/pitches');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require('./errorUtilities/wrapAsync');
 const AppError = require('./errorUtilities/customError');
-
+const Joi = require('joi');
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
 const mongoose = require('mongoose');
@@ -24,6 +24,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
+
+//Custom middlewares
+const validatePitch = function (req, res, next) {
+  const pitchJoiSchema = Joi.object({
+    pitch: Joi.object({
+      title: Joi.string().required(),
+      image: Joi.string(),
+      price: Joi.number().required().min(0),
+      description: Joi.string(),
+      location: Joi.string().required(),
+    }).required(),
+  });
+  const { error } = pitchJoiSchema.validate(req.body);
+  const msg = error.details.map((item) => item.message).join(',');
+  if (error) {
+    throw new AppError(msg, 400);
+  } else {
+    next();
+  }
+};
 
 //View engine and views
 app.engine('ejs', ejsMate);
@@ -50,10 +70,10 @@ app.get('/pitches/new', (req, res) => {
 });
 app.post(
   '/pitches',
+  validatePitch,
   wrapAsync(async (req, res) => {
-    if (!req.body.pitch) throw new AppError('Invalid pitch data', 400);
     const pitch = new Pitch(req.body.pitch);
-    const save = await pitch.save();
+    await pitch.save();
     res.redirect(`/pitches/${pitch.id}`);
   })
 );
@@ -72,6 +92,7 @@ app.get(
 );
 app.put(
   '/pitches/:id',
+  validatePitch,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
