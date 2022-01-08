@@ -9,6 +9,7 @@ const ejsMate = require('ejs-mate');
 const wrapAsync = require('./errorUtilities/wrapAsync');
 const AppError = require('./errorUtilities/customError');
 const Joi = require('joi');
+const { pitchJoiSchema } = require('./joiSchemas');
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
 const mongoose = require('mongoose');
@@ -27,15 +28,6 @@ app.use(methodOverride('_method'));
 
 //Custom middlewares
 const validatePitch = function (req, res, next) {
-  const pitchJoiSchema = Joi.object({
-    pitch: Joi.object({
-      title: Joi.string().required(),
-      image: Joi.string(),
-      price: Joi.number().required().min(0),
-      description: Joi.string(),
-      location: Joi.string().required(),
-    }).required(),
-  });
   const { error } = pitchJoiSchema.validate(req.body);
   const msg = error.details.map((item) => item.message).join(',');
   if (error) {
