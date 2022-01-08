@@ -51,11 +51,9 @@ app.get('/pitches/new', (req, res) => {
 app.post(
   '/pitches',
   wrapAsync(async (req, res) => {
+    if (!req.body.pitch) throw new AppError('Invalid pitch data', 400);
     const pitch = new Pitch(req.body.pitch);
     const save = await pitch.save();
-    if (!save) {
-      throw new AppError('There is problem while saving the pitch', 500);
-    }
     res.redirect(`/pitches/${pitch.id}`);
   })
 );
@@ -111,16 +109,15 @@ app.get(
     res.render('pitches/show.ejs', { pitch });
   })
 );
+//404 fallback
+app.all('*', (req, res, next) => {
+  next(new AppError('Page does not exist', 404));
+});
 
 //Error handler middleware
 app.use((err, req, res, next) => {
   const { message = 'Something went wrong', status = 500 } = err;
-  res.status(status).send(message);
-});
-
-//404 fallback
-app.use((req, res) => {
-  res.status(404).send("This page doesn't exist");
+  res.status(status).render('pitches/error.ejs', { message, status });
 });
 
 //App start
