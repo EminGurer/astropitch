@@ -4,12 +4,10 @@ const path = require('path');
 const PORT = 8080;
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
-const Pitch = require('./models/pitches');
-const Review = require('./models/reviews');
 const ejsMate = require('ejs-mate');
-const wrapAsync = require('./errorUtilities/wrapAsync');
 const AppError = require('./errorUtilities/customError');
-const { pitchJoiSchema, reviewJoiSchema } = require('./joiSchemas');
+const pitchesRouter = require('./routes/pitches');
+const reviewsRouter = require('./routes/reviews');
 
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
@@ -27,134 +25,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
 
-//Custom middlewares
-const validatePitch = function (req, res, next) {
-  const { error } = pitchJoiSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((item) => item.message).join(',');
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
-const validateReview = function (req, res, next) {
-  const { error } = reviewJoiSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((item) => item.message).join(',');
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
-
 //View engine and views
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 //Routes
+app.use('/pitches', pitchesRouter);
+app.use('/pitches/:pitchID/reviews', reviewsRouter);
 
-//All pitches
-app.get(
-  '/',
-  wrapAsync(async (req, res) => {
-    const pitches = await Pitch.find({});
-    if (!pitches) {
-      throw new AppError('There is problem finding pitches', 404);
-    }
-    res.render('pitches/index.ejs', { pitches });
-  })
-);
-
-//Create
-app.get('/pitches/new', (req, res) => {
-  res.render('pitches/new.ejs');
-});
-app.post(
-  '/pitches',
-  validatePitch,
-  wrapAsync(async (req, res) => {
-    const pitch = new Pitch(req.body.pitch);
-    await pitch.save();
-    res.redirect(`/pitches/${pitch.id}`);
-  })
-);
-
-//Update
-app.get(
-  '/pitches/:id/edit',
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const pitch = await Pitch.findById(id);
-    if (!pitch) {
-      throw new AppError('There is no such a pitch', 404);
-    }
-    res.render('pitches/edit.ejs', { pitch });
-  })
-);
-app.put(
-  '/pitches/:id',
-  validatePitch,
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
-      new: true,
-    });
-    if (!newPitch) {
-      throw new AppError('There was a problem while updating', 500);
-    }
-    res.redirect(`/pitches/${newPitch.id}`);
-  })
-);
-
-//Delete
-app.delete(
-  '/pitches/:id',
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const del = await Pitch.findByIdAndDelete(id);
-    if (!del) {
-      throw new AppError('Could not delete this pitch', 404);
-    }
-    res.redirect('/');
-  })
-);
-
-//Show page
-app.get(
-  '/pitches/:id',
-  wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const pitch = await Pitch.findById(id).populate('reviews');
-    if (!pitch) {
-      throw new AppError('This pitch does not exist', 404);
-    }
-    res.render('pitches/show.ejs', { pitch });
-  })
-);
-
-//Review
-app.post(
-  '/pitches/:id/reviews',
-  validateReview,
-  wrapAsync(async (req, res, next) => {
-    const pitch = await Pitch.findById(req.params.id);
-    const review = new Review(req.body.review);
-    pitch.reviews.push(review);
-    await review.save();
-    await pitch.save();
-    res.redirect(`/pitches/${pitch.id}`);
-  })
-);
-app.delete(
-  '/pitches/:pitchID/reviews/:reviewID',
-  wrapAsync(async (req, res, next) => {
-    const { pitchID, reviewID } = req.params;
-    await Review.findByIdAndDelete(reviewID);
-    await Pitch.findByIdAndUpdate(pitchID, { $pull: { reviews: reviewID } });
-    res.redirect(`/pitches/${pitchID}`);
-  })
-);
 //404 fallback
 app.all('*', (req, res, next) => {
   next(new AppError('Page does not exist', 404));
@@ -168,5 +47,6 @@ app.use((err, req, res, next) => {
 
 //App start
 app.listen(PORT, () => {
-  console.log(`Express app is listening on http://localhost:${PORT}`);
+  console.log(`Express app is listening on port:${PORT}`);
+  console.log(`Go to http://localhost:${PORT}/pitches`);
 });
