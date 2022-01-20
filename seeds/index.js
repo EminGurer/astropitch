@@ -1,5 +1,7 @@
 const Pitch = require('../models/pitches');
-const seeds = require('./seedHelpers');
+const Review = require('../models/reviews');
+const seedReviews = require('./reviews.json');
+const seedPitches = require('./pitches.json');
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
 const mongoose = require('mongoose');
@@ -11,19 +13,14 @@ db.once('open', () => {
 });
 
 const seedDB = async () => {
-  await Pitch.deleteMany({});
-  for (seed of seeds) {
-    const price = Math.floor(Math.random() * 100 + 100);
-    const pitch = new Pitch({
-      title: seed.STADIUM,
-      image: 'https://source.unsplash.com/collection/9920102/400x400',
-      price: price,
-      description: seed.ADRESS,
-      location: seed.CITY,
-    });
-    await pitch.save();
+  try {
+    await Review.deleteMany({});
+    await Pitch.deleteMany({});
+    await Pitch.insertMany(seedPitches);
+    await Review.insertMany(seedReviews);
+  } catch (e) {
+    console.log(e);
   }
-  await Pitch.deleteMany({ title: '-' });
   console.log('Seeds are inserted');
 };
 
