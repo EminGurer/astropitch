@@ -5,10 +5,12 @@ const PORT = 8080;
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const Pitch = require('./models/pitches');
+const Review = require('./models/reviews');
 const ejsMate = require('ejs-mate');
 const wrapAsync = require('./errorUtilities/wrapAsync');
 const AppError = require('./errorUtilities/customError');
-const { pitchJoiSchema } = require('./joiSchemas');
+const { pitchJoiSchema, reviewJoiSchema } = require('./joiSchemas');
+
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
 const mongoose = require('mongoose');
@@ -28,8 +30,17 @@ app.use(methodOverride('_method'));
 //Custom middlewares
 const validatePitch = function (req, res, next) {
   const { error } = pitchJoiSchema.validate(req.body);
-  const msg = error.details.map((item) => item.message).join(',');
   if (error) {
+    const msg = error.details.map((item) => item.message).join(',');
+    throw new AppError(msg, 400);
+  } else {
+    next();
+  }
+};
+const validateReview = function (req, res, next) {
+  const { error } = reviewJoiSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((item) => item.message).join(',');
     throw new AppError(msg, 400);
   } else {
     next();
@@ -114,11 +125,34 @@ app.get(
   '/pitches/:id',
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const pitch = await Pitch.findById(id);
+    const pitch = await Pitch.findById(id).populate('reviews');
     if (!pitch) {
       throw new AppError('This pitch does not exist', 404);
     }
     res.render('pitches/show.ejs', { pitch });
+  })
+);
+
+//Review
+app.post(
+  '/pitches/:id/reviews',
+  validateReview,
+  wrapAsync(async (req, res, next) => {
+    const pitch = await Pitch.findById(req.params.id);
+    const review = new Review(req.body.review);
+    pitch.reviews.push(review);
+    await review.save();
+    await pitch.save();
+    res.redirect(`/pitches/${pitch.id}`);
+  })
+);
+app.delete(
+  '/pitches/:pitchID/reviews/:reviewID',
+  wrapAsync(async (req, res, next) => {
+    const { pitchID, reviewID } = req.params;
+    await Review.findByIdAndDelete(reviewID);
+    await Pitch.findByIdAndUpdate(pitchID, { $pull: { reviews: reviewID } });
+    res.redirect(`/pitches/${pitchID}`);
   })
 );
 //404 fallback

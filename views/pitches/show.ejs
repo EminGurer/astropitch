@@ -1,27 +1,83 @@
 <% layout('layouts/boilerplate.ejs') %>
 <!-- This line will inject the hmtl code into boilerplate.ejs -->
-<div class="row">
-  <div class="col-6 offset-3">
-    <div class="card mb-3">
-      <img src="<%= pitch.image %>" class="card-img-top" alt="pitch image" />
-      <div class="card-body">
-        <h5 class="card-title"><%= pitch.title %></h5>
-        <p class="card-text"><%= pitch.description %></p>
+<div class="container-lg">
+  <div class="row">
+    <div class="col-6">
+      <div class="card mb-3">
+        <img src="<%= pitch.image %>" class="card-img-top" alt="pitch image" />
+        <div class="card-body">
+          <h5 class="card-title"><%= pitch.title %></h5>
+          <p class="card-text"><%= pitch.description %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Price: <%= pitch.price %></li>
+          <li class="list-group-item"><%= pitch.location %></li>
+        </ul>
+        <div class="card-body">
+          <a class="btn btn-success" href="/pitches/<%= pitch.id %>/edit"
+            >Edit</a
+          >
+          <form
+            class="d-inline"
+            action="/pitches/<%= pitch.id %>?_method=DELETE"
+            method="POST"
+          >
+            <button class="btn btn-danger">Delete</button>
+          </form>
+        </div>
       </div>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">Price: <%= pitch.price %></li>
-        <li class="list-group-item"><%= pitch.location %></li>
-      </ul>
-      <div class="card-body">
-        <a class="btn btn-success" href="/pitches/<%= pitch.id %>/edit">Edit</a>
-        <form
-          class="d-inline"
-          action="/pitches/<%= pitch.id %>?_method=DELETE"
-          method="POST"
-        >
-          <button class="btn btn-danger">Delete</button>
-        </form>
-        <a class="btn btn-primary" href="/">Home</a>
+    </div>
+    <div class="col-6">
+      <h2>Leave a review</h2>
+      <form
+        class="mb-3 bs-validate"
+        novalidate
+        action="/pitches/<%= pitch.id %>/reviews"
+        method="post"
+      >
+        <div class="mb-3">
+          <label class="form-label" for="rating">Rating</label>
+          <input
+            class="form-range"
+            type="range"
+            name="review[rating]"
+            id="rating"
+            min="1"
+            max="5"
+            step="1"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="body">Review</label>
+          <textarea
+            class="form-control"
+            name="review[body]"
+            id="body"
+            cols="30"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+        <button class="btn btn-success">Submit</button>
+      </form>
+      <div class="reviews">
+        <% for(review of pitch.reviews) { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <% for(let i = 0; i < review.rating; i++) {%>
+            <span class="bi bi-star-fill text-warning"></span>
+            <% } %>
+            <p><%= review.body %></p>
+            <form
+              action="/pitches/<%= pitch.id %>/reviews/<%= review.id %>?_method=DELETE"
+              method="POST"
+            >
+              <button class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+        <% } %>
       </div>
     </div>
   </div>
