@@ -38,7 +38,7 @@ router.delete(
     const { pitchID, reviewID } = req.params;
     await Review.findByIdAndDelete(reviewID);
     await Pitch.findByIdAndUpdate(pitchID, { $pull: { reviews: reviewID } });
-    req.flash('danger', 'Review is deleted');
+    req.flash('error', 'Review is deleted');
     res.redirect(`/pitches/${pitchID}`);
   })
 );

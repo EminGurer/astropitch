@@ -77,7 +77,7 @@ router.delete(
     if (!del) {
       throw new AppError('Could not delete this pitch', 404);
     }
-    req.flash('danger', 'Pitch is deleted');
+    req.flash('error', 'Pitch is deleted');
     res.redirect('/pitches');
   })
 );
