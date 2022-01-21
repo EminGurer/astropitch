@@ -27,6 +27,7 @@ router.post(
     pitch.reviews.push(review);
     await review.save();
     await pitch.save();
+    req.flash('success', 'Review is created');
     res.redirect(`/pitches/${pitch.id}`);
   })
 );
@@ -37,6 +38,7 @@ router.delete(
     const { pitchID, reviewID } = req.params;
     await Review.findByIdAndDelete(reviewID);
     await Pitch.findByIdAndUpdate(pitchID, { $pull: { reviews: reviewID } });
+    req.flash('danger', 'Review is deleted');
     res.redirect(`/pitches/${pitchID}`);
   })
 );

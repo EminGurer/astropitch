@@ -37,6 +37,7 @@ router.post(
   wrapAsync(async (req, res) => {
     const pitch = new Pitch(req.body.pitch);
     await pitch.save();
+    req.flash('success', 'Pitch is created');
     res.redirect(`/pitches/${pitch.id}`);
   })
 );
@@ -76,6 +77,7 @@ router.delete(
     if (!del) {
       throw new AppError('Could not delete this pitch', 404);
     }
+    req.flash('danger', 'Pitch is deleted');
     res.redirect('/pitches');
   })
 );

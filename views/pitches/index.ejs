@@ -1,5 +1,12 @@
 <% layout('layouts/boilerplate.ejs') %>
 <!-- This line will inject the hmtl code into boilerplate.ejs -->
+<% if(success.length) {%>
+<div class="alert alert-success text-center h2" role="alert">
+  <%= success %>
+</div>
+<% } %> <% if(danger.length) {%>
+<div class="alert alert-danger text-center h2" role="alert"><%= danger %></div>
+<% } %>
 <ul>
   <% for(pitch of pitches){ %>
   <div class="card mb-3">

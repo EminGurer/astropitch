@@ -8,6 +8,8 @@ const ejsMate = require('ejs-mate');
 const AppError = require('./errorUtilities/customError');
 const pitchesRouter = require('./routes/pitches');
 const reviewsRouter = require('./routes/reviews');
+const session = require('express-session');
+const flash = require('connect-flash');
 
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
@@ -29,6 +31,26 @@ app.use(methodOverride('_method'));
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+//Session and cookies
+app.use(
+  session({
+    secret: 'devsecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  })
+);
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.danger = req.flash('danger');
+  next();
+});
 
 //Routes
 app.use('/pitches', pitchesRouter);

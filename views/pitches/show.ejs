@@ -2,6 +2,15 @@
 <!-- This line will inject the hmtl code into boilerplate.ejs -->
 <div class="container-lg">
   <div class="row">
+    <% if(success.length) {%>
+    <div class="alert alert-success text-center h3" role="alert">
+      <%= success %>
+    </div>
+    <% } %> <% if(danger.length) {%>
+    <div class="alert alert-danger text-center h3" role="alert">
+      <%= danger %>
+    </div>
+    <% } %>
     <div class="col-6">
       <div class="card mb-3">
         <img src="<%= pitch.image %>" class="card-img-top" alt="pitch image" />
