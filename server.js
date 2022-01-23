@@ -8,8 +8,12 @@ const ejsMate = require('ejs-mate');
 const AppError = require('./errorUtilities/customError');
 const pitchesRouter = require('./routes/pitches');
 const reviewsRouter = require('./routes/reviews');
+const usersRouter = require('./routes/users');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 
 //Database
 const DB_URL = 'mongodb://localhost:27017/astroPitch';
@@ -45,6 +49,8 @@ app.use(
     },
   })
 );
+
+//Flash
 app.use(flash());
 app.use((req, res, next) => {
   res.locals.success = req.flash('success');
@@ -52,10 +58,16 @@ app.use((req, res, next) => {
   next();
 });
 
+//Passport
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+
 //Routes
 app.use('/pitches', pitchesRouter);
 app.use('/pitches/:pitchID/reviews', reviewsRouter);
-
+app.use('/users', usersRouter);
 //404 fallback
 app.all('*', (req, res, next) => {
   next(new AppError('Page does not exist', 404));

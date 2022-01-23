@@ -41,4 +41,6 @@ PitchSchema.post('findOneAndDelete', async (doc) => {
   }
 });
 
-module.exports = mongoose.model('Pitch', PitchSchema);
+const Pitch = mongoose.model('Pitch', PitchSchema)
+
+module.exports = Pitch;
