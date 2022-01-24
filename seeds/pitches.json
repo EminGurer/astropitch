@@ -7,7 +7,7 @@
     "description": "Manisa merkeze yakın. 14 kişi oynamaya uygun",
     "location": "Manisa",
     "__v": 7,
-    "author": "61edd56d5f17c75531daf059",
+    "author": "61edb866cedecafd960366a2",
     "reviews": [
       "61e96eed9600687a8b7d4d4e",
       "61e970ab958a24f1c23a6232",
@@ -22,7 +22,7 @@
     "description": "Yeni özel suni çim zeminli 16 kişi oynamaya uygun",
     "location": "Bornova",
     "__v": 3,
-    "author": "61edd56d5f17c75531daf059",
+    "author": "61edb866cedecafd960366a2",
     "reviews": ["61e970c7958a24f1c23a6240", "61e970d7958a24f1c23a6247"]
   },
   {
@@ -34,6 +34,6 @@
     "location": "Manisa",
     "reviews": ["61e970f9958a24f1c23a6250", "61e97106958a24f1c23a6257"],
     "__v": 2,
-    "author": "61edd56d5f17c75531daf059"
+    "author": "61edb866cedecafd960366a2"
   }
 ]

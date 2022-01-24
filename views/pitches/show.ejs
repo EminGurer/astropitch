@@ -8,7 +8,8 @@
           <h5 class="card-title"><%= pitch.title %></h5>
           <p class="card-text"><%= pitch.description %></p>
           <p class="card-text text-muted">
-            Added by: <%= pitch.author.username %>
+            Added by: <% if(pitch.author.username) {%><%= pitch.author.username
+            %><% } %>
           </p>
         </div>
         <ul class="list-group list-group-flush">
@@ -40,21 +41,53 @@
         action="/pitches/<%= pitch.id %>/reviews"
         method="POST"
       >
-        <div class="mb-3">
-          <label class="form-label" for="rating">Rating</label>
+        <fieldset class="starability-basic">
           <input
-            class="form-range"
-            type="range"
+            type="radio"
+            id="no-rate"
+            class="input-no-rate"
             name="review[rating]"
-            id="rating"
-            min="1"
-            max="5"
-            step="1"
-            required
+            value="1"
+            checked
+            aria-label="No rating."
           />
-        </div>
+          <input
+            type="radio"
+            id="first-rate1"
+            name="review[rating]"
+            value="1"
+          />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input
+            type="radio"
+            id="first-rate2"
+            name="review[rating]"
+            value="2"
+          />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input
+            type="radio"
+            id="first-rate3"
+            name="review[rating]"
+            value="3"
+          />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input
+            type="radio"
+            id="first-rate4"
+            name="review[rating]"
+            value="4"
+          />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input
+            type="radio"
+            id="first-rate5"
+            name="review[rating]"
+            value="5"
+          />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
         <div class="mb-3">
-          <label class="form-label" for="body">Review</label>
           <textarea
             class="form-control"
             name="review[body]"
@@ -71,9 +104,9 @@
         <% for(review of pitch.reviews) { %>
         <div class="card mb-3">
           <div class="card-body">
-            <% for(let i = 0; i < review.rating; i++) {%>
-            <span class="bi bi-star-fill text-warning"></span>
-            <% } %>
+            <p class="starability-result" data-rating="<%= review.rating %>">
+              Rated: <%= review.rating %> stars
+            </p>
             <p><%= review.body %></p>
             <p>By: <%= review.author.username %></p>
             <% if(currentUser && review.author.id === currentUser.id) {%>

@@ -32,7 +32,7 @@ const isLoggedIn = function (req, res, next) {
 };
 const isOwnerOfPitch = async function (req, res, next) {
   const { id } = req.params;
-  const pitch = await Pitch.findById(id);
+  const pitch = await Pitch.findById(id).populate('author');
   if (req.user.id !== pitch.author.id) {
     req.flash('error', 'You dont have permissions to update the pitch');
     return res.redirect(`/pitches/${id}`);
@@ -41,9 +41,9 @@ const isOwnerOfPitch = async function (req, res, next) {
 };
 const isOwnerOfReview = async function (req, res, next) {
   const { pitchID, reviewID } = req.params;
-  const review = await Review.findById(reviewID);
-  if (req.user.id !== review.author) {
-    req.flash('error', 'You dont have permissions to update the pitch');
+  const review = await Review.findById(reviewID).populate('author');
+  if (req.user.id !== review.author.id) {
+    req.flash('error', 'You dont have permissions to update the review');
     return res.redirect(`/pitches/${pitchID}`);
   }
   next();
