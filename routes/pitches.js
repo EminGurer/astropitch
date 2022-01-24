@@ -2,20 +2,12 @@ const express = require('express');
 const router = express.Router();
 const wrapAsync = require('../errorUtilities/wrapAsync');
 const AppError = require('../errorUtilities/customError');
-const { pitchJoiSchema } = require('../joiSchemas');
 const Pitch = require('../models/pitches');
-const { isLoggedIn } = require('../middlewares.js');
-
-//Custom middlewares
-const validatePitch = function (req, res, next) {
-  const { error } = pitchJoiSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((item) => item.message).join(',');
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
+const {
+  validatePitch,
+  isLoggedIn,
+  isOwnerOfPitch,
+} = require('../middlewares.js');
 
 //Show all pitches
 router.get(
@@ -34,9 +26,10 @@ router.get('/new', isLoggedIn, (req, res) => {
 });
 router.post(
   '/',
-  validatePitch,
   isLoggedIn,
+  validatePitch,
   wrapAsync(async (req, res) => {
+    req.body.pitch.author = req.user.id;
     const pitch = new Pitch(req.body.pitch);
     await pitch.save();
     req.flash('success', 'Pitch is created');
@@ -47,6 +40,7 @@ router.post(
 router.get(
   '/:id/edit',
   isLoggedIn,
+  isOwnerOfPitch,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const pitch = await Pitch.findById(id);
@@ -59,6 +53,7 @@ router.get(
 router.put(
   '/:id',
   isLoggedIn,
+  isOwnerOfPitch,
   validatePitch,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
@@ -76,6 +71,7 @@ router.put(
 router.delete(
   '/:id',
   isLoggedIn,
+  isOwnerOfPitch,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const del = await Pitch.findByIdAndDelete(id);
@@ -92,7 +88,9 @@ router.get(
   '/:id',
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const pitch = await Pitch.findById(id).populate('reviews');
+    const pitch = await Pitch.findById(id)
+      .populate({ path: 'reviews', populate: { path: 'author' } })
+      .populate('author');
     if (!pitch) {
       throw new AppError('This pitch does not exist', 404);
     }

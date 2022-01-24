@@ -23,6 +23,11 @@ const PitchSchema = new Schema({
     type: String,
     required: [true, 'Pitch must have a location'],
   },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Author is needed to create a pitch. You must login'],
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,
@@ -41,6 +46,6 @@ PitchSchema.post('findOneAndDelete', async (doc) => {
   }
 });
 
-const Pitch = mongoose.model('Pitch', PitchSchema)
+const Pitch = mongoose.model('Pitch', PitchSchema);
 
 module.exports = Pitch;

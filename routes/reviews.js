@@ -1,28 +1,22 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require('../errorUtilities/wrapAsync');
-const AppError = require('../errorUtilities/customError');
-const { reviewJoiSchema } = require('../joiSchemas');
 const Pitch = require('../models/pitches');
 const Review = require('../models/reviews');
-
-//Custom middleware
-const validateReview = function (req, res, next) {
-  const { error } = reviewJoiSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((item) => item.message).join(',');
-    throw new AppError(msg, 400);
-  } else {
-    next();
-  }
-};
+const {
+  validateReview,
+  isLoggedIn,
+  isOwnerOfReview,
+} = require('../middlewares');
 
 //Create
 router.post(
   '/',
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res, next) => {
     const pitch = await Pitch.findById(req.params.pitchID);
+    req.body.review.author = req.user.id;
     const review = new Review(req.body.review);
     pitch.reviews.push(review);
     await review.save();
@@ -34,6 +28,8 @@ router.post(
 //Delete
 router.delete(
   '/:reviewID',
+  isLoggedIn,
+  isOwnerOfReview,
   wrapAsync(async (req, res, next) => {
     const { pitchID, reviewID } = req.params;
     await Review.findByIdAndDelete(reviewID);
