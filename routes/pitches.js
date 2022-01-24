@@ -4,6 +4,7 @@ const wrapAsync = require('../errorUtilities/wrapAsync');
 const AppError = require('../errorUtilities/customError');
 const { pitchJoiSchema } = require('../joiSchemas');
 const Pitch = require('../models/pitches');
+const { isLoggedIn } = require('../middlewares.js');
 
 //Custom middlewares
 const validatePitch = function (req, res, next) {
@@ -16,7 +17,7 @@ const validatePitch = function (req, res, next) {
   }
 };
 
-//All pitches
+//Show all pitches
 router.get(
   '/',
   wrapAsync(async (req, res) => {
@@ -28,12 +29,13 @@ router.get(
   })
 );
 //Create
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
   res.render('pitches/new.ejs');
 });
 router.post(
   '/',
   validatePitch,
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const pitch = new Pitch(req.body.pitch);
     await pitch.save();
@@ -44,6 +46,7 @@ router.post(
 //Update
 router.get(
   '/:id/edit',
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const pitch = await Pitch.findById(id);
@@ -55,6 +58,7 @@ router.get(
 );
 router.put(
   '/:id',
+  isLoggedIn,
   validatePitch,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
@@ -71,6 +75,7 @@ router.put(
 //Delete
 router.delete(
   '/:id',
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const del = await Pitch.findByIdAndDelete(id);
