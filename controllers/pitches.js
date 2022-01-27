@@ -1,6 +1,7 @@
 const wrapAsync = require('../errorUtilities/wrapAsync');
 const AppError = require('../errorUtilities/customError');
 const Pitch = require('../models/pitches');
+const { cloudinary } = require('../cloudinary');
 
 const showAllPitches = wrapAsync(async (req, res) => {
   const pitches = await Pitch.find({});
@@ -16,6 +17,10 @@ const showCreateForm = (req, res) => {
 
 const createPitch = wrapAsync(async (req, res) => {
   req.body.pitch.author = req.user.id;
+  req.body.pitch.images = req.files.map((file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
   const pitch = new Pitch(req.body.pitch);
   await pitch.save();
   req.flash('success', 'Pitch is created');
@@ -33,19 +38,32 @@ const showUpdateForm = wrapAsync(async (req, res) => {
 
 const updatePitch = wrapAsync(async (req, res) => {
   const { id } = req.params;
-  const newPitch = await Pitch.findByIdAndUpdate(id, req.body.pitch, {
-    new: true,
-  });
-  if (!newPitch) {
-    throw new AppError('There was a problem while updating', 500);
+  const moreImages = req.files.map((file) => ({
+    url: file.path,
+    filename: file.filename,
+  }));
+  const pitch = await Pitch.findById(id);
+  pitch.images.push(...moreImages);
+  await pitch.save();
+  if (req.body.deleteImages) {
+    for (let filename of req.body.deleteImages) {
+      await cloudinary.uploader.destroy(filename);
+    }
+
+    await pitch.updateOne({
+      $pull: { images: { filename: { $in: req.body.deleteImages } } },
+    });
   }
   req.flash('success', 'Pitch is updated');
-  res.redirect(`/pitches/${newPitch.id}`);
+  res.redirect(`/pitches/${pitch.id}`);
 });
 
 const deletePitch = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const del = await Pitch.findByIdAndDelete(id);
+  for (let image of del.images) {
+    await cloudinary.uploader.destroy(image.filename);
+  }
   if (!del) {
     throw new AppError('Could not delete this pitch', 404);
   }

@@ -8,6 +8,7 @@
       method="POST"
       novalidate
       class="bs-validate"
+      enctype="multipart/form-data"
     >
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
@@ -44,14 +45,15 @@
         />
       </div>
       <div class="mb-3">
-        <label class="form-label" for="image">İmage URL</label>
+        <label for="formFileMultiple" class="form-label"
+          >Add more images:</label
+        >
         <input
-          required
           class="form-control"
-          type="text"
-          name="pitch[image]"
-          id="image"
-          value="<%= pitch.image %>"
+          name="image"
+          type="file"
+          id="formFileMultiple"
+          multiple
         />
       </div>
       <div class="mb-3">
@@ -65,8 +67,24 @@
 <%= pitch.description %></textarea
         >
       </div>
-      <button class="btn btn-success">Save</button>
-      <a class="btn btn-danger" href="/pitches">Back to pitches</a>
+      <div class="mb-3">
+        <% pitch.images.forEach((image, index) => { %>
+        <div class="col-6">
+          <img src="<%= image.thumbnail %>" class="img-thumbnail" alt="" />
+          <div class="form-check-inline">
+            <input
+              type="checkbox"
+              id="image-<%= index %>"
+              name="deleteImages[]"
+              value="<%= image.filename %>"
+            />
+            <label for="image-<%= index %>">Delete ?</label>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <button class="btn btn-success mb-3">Save</button>
+      <a class="btn btn-danger mb-3" href="/pitches">Back to pitches</a>
     </form>
   </div>
 </div>

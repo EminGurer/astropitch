@@ -2,15 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Review = require('./reviews');
 
+const ImageSchema = new Schema({
+  url: String,
+  filename: String,
+});
+ImageSchema.virtual('thumbnail').get(function () {
+  return this.url.replace('/upload', '/upload/w_200');
+});
 const PitchSchema = new Schema({
   title: {
     type: String,
     required: [true, 'Pitch must have a title'],
   },
-  image: {
-    type: String,
-    required: [true, 'Pitch must have an image'],
-  },
+  images: [ImageSchema],
   price: {
     type: Number,
     required: [true, 'Pitch must have a price'],
