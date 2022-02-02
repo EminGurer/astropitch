@@ -1,5 +1,6 @@
 const Pitch = require('../models/pitches');
 const Review = require('../models/reviews');
+const User = require('../models/user');
 const fs = require('fs');
 const path = require('path');
 //Database
@@ -15,6 +16,7 @@ const readDBAndWriteToFile = async function () {
   });
   const pitches = await Pitch.find({});
   const reviews = await Review.find({});
+  const users = await User.find({});
 
   fs.writeFileSync(
     path.join(__dirname, 'reviews.json'),
@@ -38,10 +40,22 @@ const readDBAndWriteToFile = async function () {
       console.log('Fs write succeed');
     }
   );
+  fs.writeFileSync(
+    path.join(__dirname, 'users.json'),
+    JSON.stringify(users),
+    (e) => {
+      if (e) {
+        console.log('Error fs');
+        console.log(e);
+      }
+      console.log('Fs write succeed');
+    }
+  );
   await db.close();
   console.log('Database readed and writed to files');
   console.log('Please check ./reviews.json');
   console.log('Please check ./pitches.json');
+  console.log('Please check ./users.json');
 };
 
 readDBAndWriteToFile();
