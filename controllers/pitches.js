@@ -2,6 +2,7 @@ const wrapAsync = require('../errorUtilities/wrapAsync');
 const AppError = require('../errorUtilities/customError');
 const Pitch = require('../models/pitches');
 const { cloudinary } = require('../cloudinary');
+const mapboxToken = process.env.MAPBOX_TOKEN;
 
 const showAllPitches = wrapAsync(async (req, res) => {
   const pitches = await Pitch.find({});
@@ -16,6 +17,7 @@ const showCreateForm = (req, res) => {
 };
 
 const createPitch = wrapAsync(async (req, res) => {
+  req.body.pitch.geometry = JSON.parse(req.body.pitch.geometry);
   req.body.pitch.author = req.user.id;
   req.body.pitch.images = req.files.map((file) => ({
     url: file.path,

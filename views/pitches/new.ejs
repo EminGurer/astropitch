@@ -1,4 +1,11 @@
 <% layout('layouts/boilerplate.ejs') %>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+  type="text/css"
+/>
+<link rel="stylesheet" href="/css/new.css" />
 <div class="row">
   <h1 class="text-center">New Pitch</h1>
   <div class="col-6 offset-3">
@@ -27,6 +34,7 @@
           type="file"
           id="formFileMultiple"
           multiple
+          required
         />
       </div>
       <div class="mb-3">
@@ -51,15 +59,26 @@
       </div>
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
+        <div id="geocoder" class="geocoder"></div>
+        <div id="map" class="mb-3"></div>
         <input
-          required
           class="form-control"
           type="text"
-          name="pitch[location]"
-          id="location"
+          name="pitch[geometry]"
+          id="geometry"
+          placeholder="Click on map to set location"
+          required
+          hidden
         />
+        <div class="invalid-feedback">
+          Location is required, please click on map to set a location!
+        </div>
       </div>
       <button class="btn btn-success mb-3">Save</button>
     </form>
   </div>
 </div>
+<script>
+  const mapboxToken = '<%- process.env.MAPBOX_TOKEN %>';
+</script>
+<script src="/js/newPageMap.js"></script>

@@ -15,6 +15,17 @@ const PitchSchema = new Schema({
     required: [true, 'Pitch must have a title'],
   },
   images: [ImageSchema],
+  geometry: {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+    },
+  },
   price: {
     type: Number,
     required: [true, 'Pitch must have a price'],
@@ -22,10 +33,6 @@ const PitchSchema = new Schema({
   description: {
     type: String,
     required: [true, 'Pitch must have a description'],
-  },
-  location: {
-    type: String,
-    required: [true, 'Pitch must have a location'],
   },
   author: {
     type: Schema.Types.ObjectId,

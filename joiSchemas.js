@@ -8,7 +8,7 @@ module.exports.pitchJoiSchema = Joi.object({
     }),
     price: Joi.number().required().min(0),
     description: Joi.string(),
-    location: Joi.string().required(),
+    geometry: Joi.string().required(),
   }).required(),
   deleteImages: Joi.array(),
 });
