@@ -29,3 +29,4 @@ map.on('click', function addMarker(event) {
   };
   geometryInput.value = JSON.stringify(geoJson);
 });
+map.addControl(new mapboxgl.NavigationControl());
