@@ -9,3 +9,4 @@ const map = new mapboxgl.Map({
 const marker = new mapboxgl.Marker()
   .setLngLat(pitch.geometry.coordinates)
   .addTo(map);
+map.addControl(new mapboxgl.NavigationControl());

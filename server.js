@@ -18,9 +18,13 @@ const flash = require('connect-flash');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require('helmet');
+const DB_URL = 'mongodb://localhost:27017/astroPitch';
+// const DB_URL = process.env.DB_URL;
+const MongoStore = require('connect-mongo');
 
 //Database
-const DB_URL = 'mongodb://localhost:27017/astroPitch';
 const mongoose = require('mongoose');
 mongoose.connect(DB_URL);
 const db = mongoose.connection;
@@ -34,6 +38,52 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
+app.use(mongoSanitize());
+app.use(helmet());
+
+const scriptSrcUrls = [
+  'https://stackpath.bootstrapcdn.com',
+  'https://api.tiles.mapbox.com',
+  'https://api.mapbox.com',
+  'https://kit.fontawesome.com',
+  'https://cdnjs.cloudflare.com',
+  'https://cdn.jsdelivr.net',
+];
+const styleSrcUrls = [
+  'https://kit-free.fontawesome.com',
+  'https://stackpath.bootstrapcdn.com',
+  'https://api.mapbox.com',
+  'https://api.tiles.mapbox.com',
+  'https://fonts.googleapis.com',
+  'https://use.fontawesome.com',
+];
+const connectSrcUrls = [
+  'https://api.mapbox.com',
+  'https://*.tiles.mapbox.com',
+  'https://events.mapbox.com',
+];
+const fontSrcUrls = [];
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [],
+      connectSrc: ["'self'", ...connectSrcUrls],
+      scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+      styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+      workerSrc: ["'self'", 'blob:'],
+      childSrc: ['blob:'],
+      objectSrc: [],
+      imgSrc: [
+        "'self'",
+        'blob:',
+        'data:',
+        'https://res.cloudinary.com/dcafzpvgk/', //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+        'https://images.unsplash.com',
+      ],
+      fontSrc: ["'self'", ...fontSrcUrls],
+    },
+  })
+);
 
 //View engine and views
 app.engine('ejs', ejsMate);
@@ -41,13 +91,25 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 //Session and cookies
+const store = MongoStore.create({
+  mongoUrl: DB_URL,
+  secret: 'devsecret',
+  touchAfter: 24 * 60 * 60,
+});
+store.on('error', function (e) {
+  console.log('Session store error');
+  console.log(e);
+});
 app.use(
   session({
+    store: store,
+    name: 'session',
     secret: 'devsecret',
     resave: false,
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
+      //secure: true,
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
@@ -85,7 +147,7 @@ app.all('*', (req, res, next) => {
 //Error handler middleware
 app.use((err, req, res, next) => {
   const { message = 'Something went wrong', status = 500 } = err;
-  res.status(status).render('pitches/error.ejs', { message, status });
+  res.status(status).render('pitches/error.ejs', { message, status, err });
 });
 
 //App start
