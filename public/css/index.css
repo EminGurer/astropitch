@@ -2,3 +2,14 @@
   width: 100%;
   height: 300px;
 }
+
+.index-thumbnail {
+  width: 20vw;
+  height: 20vw;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.index-thumbnail > img {
+}

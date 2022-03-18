@@ -1,5 +1,9 @@
 <% layout('layouts/boilerplate.ejs') %>
-<!-- This line will inject the hmtl code into boilerplate.ejs -->
+<script src="/js/mapboxgl.js"></script>
+<script src="/js/mapbox-gl-geocoder.js"></script>
+<link rel="stylesheet" href="/css/mapboxgl.css" type="text/css" />
+<link rel="stylesheet" href="/css/mapbox-gl-geocoder.css" />
+<link rel="stylesheet" href="/css/locator.css" />
 <div class="row">
   <h1 class="text-center">Edit Pitch</h1>
   <div class="col-6 offset-3">
@@ -35,14 +39,20 @@
       </div>
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
+        <div id="geocoder" class="geocoder"></div>
+        <div id="map" class="mb-3"></div>
         <input
-          required
           class="form-control"
           type="text"
-          name="pitch[location]"
-          id="location"
-          value="<%= pitch.location %>"
+          name="pitch[geometry]"
+          id="geometry"
+          placeholder="Click on map to set location"
+          required
+          hidden
         />
+        <div class="invalid-feedback">
+          Location is required, please click on map to set a location!
+        </div>
       </div>
       <div class="mb-3">
         <label for="formFileMultiple" class="form-label"
@@ -70,7 +80,12 @@
       <div class="mb-3">
         <% pitch.images.forEach((image, index) => { %>
         <div class="col-6">
-          <img src="<%= image.thumbnail %>" class="img-thumbnail" alt="" />
+          <img
+            src="<%= image.thumbnail %>"
+            class="img-thumbnail"
+            alt=""
+            crossorigin
+          />
           <div class="form-check-inline">
             <input
               type="checkbox"
@@ -88,3 +103,8 @@
     </form>
   </div>
 </div>
+<script>
+  const mapboxToken = '<%- process.env.MAPBOX_TOKEN %>';
+  const pitch = <%- JSON.stringify(pitch) %>;
+</script>
+<script src="/js/locator.js"></script>

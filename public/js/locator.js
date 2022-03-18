@@ -2,8 +2,8 @@ mapboxgl.accessToken = mapboxToken;
 const map = new mapboxgl.Map({
   container: 'map', // container ID
   style: 'mapbox://styles/mapbox/streets-v11', // style URL
-  center: [32.86, 39.92], // starting position [lng, lat]
-  zoom: 0, // starting zoom
+  center: pitch ? pitch.geometry.coordinates : [32.86, 39.92], // starting position [lng, lat]
+  zoom: pitch ? 12 : 0, // starting zoom
 });
 
 const geocoder = new MapboxGeocoder({
@@ -12,8 +12,12 @@ const geocoder = new MapboxGeocoder({
   marker: false,
   placeholder: 'Search in map',
 });
-const marker = new mapboxgl.Marker();
 const geometryInput = document.getElementById('geometry');
+const marker = new mapboxgl.Marker();
+if (pitch) {
+  marker.setLngLat(pitch.geometry.coordinates).addTo(map);
+  geometryInput.value = JSON.stringify(pitch.geometry);
+}
 
 document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 

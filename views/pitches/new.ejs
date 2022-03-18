@@ -1,11 +1,9 @@
 <% layout('layouts/boilerplate.ejs') %>
-<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
-<link
-  rel="stylesheet"
-  href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
-  type="text/css"
-/>
-<link rel="stylesheet" href="/css/new.css" />
+<script src="/js/mapboxgl.js"></script>
+<script src="/js/mapbox-gl-geocoder.js"></script>
+<link rel="stylesheet" href="/css/mapboxgl.css" type="text/css" />
+<link rel="stylesheet" href="/css/mapbox-gl-geocoder.css" />
+<link rel="stylesheet" href="/css/locator.css" />
 <div class="row">
   <h1 class="text-center">New Pitch</h1>
   <div class="col-6 offset-3">
@@ -80,5 +78,6 @@
 </div>
 <script>
   const mapboxToken = '<%- process.env.MAPBOX_TOKEN %>';
+  const pitch = null;
 </script>
-<script src="/js/newPageMap.js"></script>
+<script src="/js/locator.js"></script>
