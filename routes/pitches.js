@@ -1,8 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const wrapAsync = require('../errorUtilities/wrapAsync');
-const AppError = require('../errorUtilities/customError');
-const Pitch = require('../models/pitches');
 const multer = require('multer');
 const { storage } = require('../cloudinary');
 const upload = multer({ storage });

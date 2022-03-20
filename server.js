@@ -20,7 +20,7 @@ const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const MongoStore = require('connect-mongo');
-const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/astroPitch';
+const DB_URL = process.env.DB_URL;
 
 //Database
 const mongoose = require('mongoose');
@@ -36,6 +36,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(methodOverride('_method'));
+
+//Security
 app.use(mongoSanitize());
 app.use(helmet());
 

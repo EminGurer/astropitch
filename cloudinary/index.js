@@ -6,11 +6,11 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
-
+const folder = process.env.CLOUDINARY_FOLDER;
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'Astropitch',
+    folder: folder,
     allowedFormats: ['jpeg', 'png', 'jpg'],
   },
 });
