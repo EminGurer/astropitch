@@ -4,6 +4,7 @@
   "description": "Web application for rating and finding astro pitch. Requires register to comment and add pitches",
   "main": "server.js",
   "scripts": {
+    "start": "",
     "dev": "nodemon server.js",
     "test": "npm run test"
   },

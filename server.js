@@ -5,7 +5,6 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const app = express();
 const path = require('path');
-const PORT = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
@@ -20,8 +19,8 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/astroPitch';
 const MongoStore = require('connect-mongo');
+const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/astroPitch';
 
 //Database
 const mongoose = require('mongoose');
@@ -136,12 +135,12 @@ app.use((req, res, next) => {
 });
 
 //Routes
-app.use('/', (req, res, next) => {
-  res.redirect('/pitches');
-});
 app.use('/pitches', pitchesRouter);
 app.use('/pitches/:pitchID/reviews', reviewsRouter);
 app.use('/users', usersRouter);
+app.use('/', (req, res, next) => {
+  res.redirect('/pitches');
+});
 //404 fallback
 app.all('*', (req, res, next) => {
   next(new AppError('Page does not exist', 404));
@@ -154,6 +153,7 @@ app.use((err, req, res, next) => {
 });
 
 //App start
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Express app is listening on port:${PORT}`);
   console.log(`Go to http://localhost:${PORT}/pitches`);
