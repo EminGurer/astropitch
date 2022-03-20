@@ -20,8 +20,7 @@ const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
-const DB_URL = 'mongodb://localhost:27017/astroPitch';
-// const DB_URL = process.env.DB_URL;
+const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/astroPitch';
 const MongoStore = require('connect-mongo');
 
 //Database
@@ -91,9 +90,10 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 //Session and cookies
+const secret = process.env.SECRET || 'devsecret';
 const store = MongoStore.create({
   mongoUrl: DB_URL,
-  secret: 'devsecret',
+  secret: secret,
   touchAfter: 24 * 60 * 60,
 });
 store.on('error', function (e) {
@@ -104,7 +104,7 @@ app.use(
   session({
     store: store,
     name: 'session',
-    secret: 'devsecret',
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -136,6 +136,9 @@ app.use((req, res, next) => {
 });
 
 //Routes
+app.use('/', (req, res, next) => {
+  res.redirect('/pitches');
+});
 app.use('/pitches', pitchesRouter);
 app.use('/pitches/:pitchID/reviews', reviewsRouter);
 app.use('/users', usersRouter);
