@@ -1,6 +1,6 @@
 mapboxgl.accessToken = mapboxToken;
 const map = new mapboxgl.Map({
-  container: 'map',
+  container: 'homemap',
   style: 'mapbox://styles/mapbox/dark-v10',
   center: [35.243322, 38.963745],
   zoom: 4,
@@ -62,8 +62,8 @@ map.on('load', () => {
     source: 'pitches',
     filter: ['!', ['has', 'point_count']],
     paint: {
-      'circle-color': '#11b4da',
-      'circle-radius': 4,
+      'circle-color': '#6BEB00',
+      'circle-radius': 6,
       'circle-stroke-width': 1,
       'circle-stroke-color': '#fff',
     },
@@ -100,6 +100,12 @@ map.on('load', () => {
     map.getCanvas().style.cursor = 'pointer';
   });
   map.on('mouseleave', 'clusters', () => {
+    map.getCanvas().style.cursor = '';
+  });
+  map.on('mouseenter', 'unclustered-point', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+  map.on('mouseleave', 'unclustered-point', () => {
     map.getCanvas().style.cursor = '';
   });
   map.addControl(new mapboxgl.NavigationControl());
