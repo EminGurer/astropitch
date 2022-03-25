@@ -1,0 +1,53 @@
+<% layout('layouts/boilerplate.ejs') %>
+<h2>Edit your profile</h2>
+<form
+  class="bs-validate"
+  action="/users/profile?_method=PUT"
+  method="POST"
+  novalidate
+>
+  <div class="form-group">
+    <label for="email">Email:</label>
+    <input
+      class="form-control"
+      type="email"
+      name="email"
+      id="email"
+      value="<%= currentUser.email %>"
+      required
+    />
+  </div>
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input
+      class="form-control"
+      type="text"
+      name="username"
+      id="username"
+      value="<%= currentUser.username %>"
+      required
+    />
+  </div>
+  <div class="form-group mb-3">
+    <label for="password">Password:</label>
+    <input
+      class="form-control"
+      type="password"
+      name="password"
+      id="password"
+      placeholder="Enter your password to make any change"
+      required
+    />
+  </div>
+  <div class="form-group mb-3">
+    <label for="passwordnew">New password</label>
+    <input
+      class="form-control"
+      type="password"
+      name="passwordnew"
+      id="passwordnew"
+      placeholder="Leave empty if you don't want to change your password"
+    />
+  </div>
+  <button class="btn btn-success">Save</button>
+</form>

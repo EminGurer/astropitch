@@ -43,3 +43,10 @@ module.exports.reviewJoiSchema = Joi.object({
     body: Joi.string().required().escapeHTML(),
   }).required(),
 });
+
+module.exports.userJoiSchema = Joi.object({
+  email: Joi.string().email().required().escapeHTML(),
+  username: Joi.string().required().escapeHTML(),
+  password: Joi.string().required().escapeHTML(),
+  passwordnew: Joi.string().allow(null, '').escapeHTML(),
+});
