@@ -1,6 +1,10 @@
 const Pitch = require('./models/pitches');
 const AppError = require('./errorUtilities/customError');
-const { pitchJoiSchema, reviewJoiSchema } = require('./joiSchemas');
+const {
+  pitchJoiSchema,
+  reviewJoiSchema,
+  userJoiSchema,
+} = require('./joiSchemas');
 const Review = require('./models/reviews');
 
 const validatePitch = function (req, res, next) {
@@ -14,6 +18,15 @@ const validatePitch = function (req, res, next) {
 };
 const validateReview = function (req, res, next) {
   const { error } = reviewJoiSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((item) => item.message).join(',');
+    throw new AppError(msg, 400);
+  } else {
+    next();
+  }
+};
+const validateUser = function (req, res, next) {
+  const { error } = userJoiSchema.validate(req.body);
   if (error) {
     const msg = error.details.map((item) => item.message).join(',');
     throw new AppError(msg, 400);
@@ -53,5 +66,6 @@ module.exports = {
   isOwnerOfPitch,
   validatePitch,
   validateReview,
+  validateUser,
   isOwnerOfReview,
 };

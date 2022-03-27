@@ -2,7 +2,7 @@
 <h2>Edit your profile</h2>
 <form
   class="bs-validate"
-  action="/users/<%= currentUser.id %>?_method=PUT"
+  action="/users/profile?_method=PUT"
   method="POST"
   novalidate
 >
@@ -28,26 +28,38 @@
       required
     />
   </div>
+  <<<<<<< HEAD
   <div class="form-group">
     <label for="password">Old password:</label>
-    <input
-      class="form-control"
-      type="password"
-      name="password"
-      id="password"
-      required
-    />
-  </div>
-  <div class="form-group mb-3">
-    <label for="passwordnew">New password:</label>
-    <input
-      class="form-control"
-      type="password"
-      name="passwordnew"
-      id="passwordnew"
-      required
+    =======
+    <div class="form-group mb-3">
+      <label for="password">Password:</label>
+      >>>>>>> 27bef16919bd329953b9c3cbb6cbc9758565f47a <input
+      class="form-control" type="password" name="password" id="password" <<<<<<<
+      HEAD ======= placeholder="Enter your password to make any change" >>>>>>>
+      27bef16919bd329953b9c3cbb6cbc9758565f47a required />
+    </div>
+    <div class="form-group mb-3">
+      <<<<<<< HEAD
+      <label for="passwordnew">New password:</label>
+      =======
+      <label for="passwordnew">New password</label>
+      >>>>>>> 27bef16919bd329953b9c3cbb6cbc9758565f47a
+      <input
+        class="form-control"
+        type="password"
+        name="passwordnew"
+        id="passwordnew"
+        <<<<<<<
+        HEAD
+        required
+      />
+    </div>
+    <button class="btn btn-success">Save</button>
+    <a class="btn btn-primary" href="/pitches">Home</a>
+    ======= placeholder="Leave empty if you don't want to change your password"
     />
   </div>
   <button class="btn btn-success">Save</button>
-  <a class="btn btn-primary" href="/pitches">Home</a>
+  >>>>>>> 27bef16919bd329953b9c3cbb6cbc9758565f47a
 </form>

@@ -4,7 +4,7 @@ const User = require('../models/user');
 const fs = require('fs');
 const path = require('path');
 //Database
-const DB_URL = 'mongodb://localhost:27017/astroPitch';
+const DB_URL = process.env.DB_URL;
 const mongoose = require('mongoose');
 
 const readDBAndWriteToFile = async function () {
