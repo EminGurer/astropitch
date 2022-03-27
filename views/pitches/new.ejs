@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="/css/mapboxgl.css" type="text/css" />
 <link rel="stylesheet" href="/css/mapbox-gl-geocoder.css" />
 <link rel="stylesheet" href="/css/locator.css" />
+<link rel="stylesheet" href="/css/cropper.css" />
+<link rel="stylesheet" href="/css/newPage.css" />
 <div class="row">
   <h1 class="text-center">New Pitch</h1>
   <div class="col-6 offset-3">
@@ -76,8 +78,19 @@
     </form>
   </div>
 </div>
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#cropModal"
+  id="modalOpener"
+>
+  Open modal
+</button>
 <script>
   const mapboxToken = '<%- process.env.MAPBOX_TOKEN %>';
   const pitch = null;
 </script>
 <script src="/js/locator.js"></script>
+<script src="/js/cropper.js"></script>
+<script src="/js/imageUploader.js"></script>

@@ -1,0 +1,19 @@
+.crop-wrapper {
+  width: 100%;
+  position: relative;
+}
+.crop-image {
+  display: block;
+
+  /* This rule is very important, please don't ignore this */
+  max-width: 100%;
+}
+#modalOpener {
+  display: none;
+}
+.crop-delete-button {
+  position: absolute;
+  z-index: 999;
+  right: 1rem;
+  top: 1rem;
+}

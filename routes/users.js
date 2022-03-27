@@ -50,5 +50,19 @@ router.get('/logout', (req, res) => {
   req.flash('success', 'You are logged out');
   res.redirect('/pitches');
 });
+//Profile and edit
+router.get('/profile', (req, res, next) => {
+  res.render('users/profile');
+});
+router.put(
+  '/:id',
+  passport.authenticate('local', {
+    failureFlash: true,
+    failureRedirect: '/users/profile',
+  }),
+  (req, res, next) => {
+    const { id } = req.params;
+  }
+);
 
 module.exports = router;
