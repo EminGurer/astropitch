@@ -31,10 +31,14 @@ db.once('open', () => {
   console.log('mongoDB connection is open');
 });
 
-//Static assets and body parsers
+//Serve static assets(.js and .css etc)
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Use body parser for request body parsing(url encoding and json etc)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+//Method override (overriding HTTP methods(POST => DELETE or PUT) using url query called ?_method)
 app.use(methodOverride('_method'));
 
 //Security
