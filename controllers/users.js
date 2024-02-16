@@ -1,9 +1,7 @@
-const passport = require('passport');
-const AppError = require('../errorUtilities/customError');
 const wrapAsync = require('../errorUtilities/wrapAsync');
 const User = require('../models/user');
 
-const registerUser = async (req, res, next) => {
+const registerUser = wrapAsync(async (req, res, next) => {
   try {
     const { email, username, password } = req.body;
     const user = new User({ email, username });
@@ -17,11 +15,11 @@ const registerUser = async (req, res, next) => {
     req.flash('error', e.message);
     res.redirect('/users/register');
   }
-};
+});
 const showProfile = (req, res, next) => {
   res.render('users/profile');
 };
-const updateProfile = async (req, res, next) => {
+const updateProfile = wrapAsync(async (req, res, next) => {
   const { id } = req.user;
   const { email, username, password, passwordnew } = req.body;
   const user = await User.findById(id);
@@ -42,7 +40,7 @@ const updateProfile = async (req, res, next) => {
       return res.redirect('/pitches');
     });
   }
-};
+});
 
 module.exports = {
   registerUser,

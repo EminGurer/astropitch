@@ -31,10 +31,10 @@ db.once('open', () => {
   console.log('mongoDB connection is open');
 });
 
-//Serve static assets(.js and .css etc)
+//Serve static assets(.js and .css files in public directory)
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Use body parser for request body parsing(url encoding and json etc)
+//Use body parser for request.body parsing(url encoding and json etc)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

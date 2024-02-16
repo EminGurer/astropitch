@@ -1,8 +1,5 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const wrapAsync = require('../errorUtilities/wrapAsync');
-const Pitch = require('../models/pitches');
-const Review = require('../models/reviews');
 
 //Middlewares
 const {

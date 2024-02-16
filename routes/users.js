@@ -1,8 +1,5 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const wrapAsync = require('../errorUtilities/wrapAsync');
-const AppError = require('../errorUtilities/customError');
-const User = require('../models/user');
 const passport = require('passport');
 const {
   registerUser,
@@ -15,7 +12,7 @@ const { isLoggedIn, validateUser } = require('../middlewares');
 router.get('/register', (req, res, next) => {
   res.render('users/register.ejs');
 });
-router.post('/register', wrapAsync(registerUser));
+router.post('/register', registerUser);
 
 //Login
 router.get('/login', (req, res) => {
@@ -44,7 +41,7 @@ router.get('/logout', (req, res) => {
 router
   .route('/profile')
   .get(showProfile)
-  .put(isLoggedIn, validateUser, wrapAsync(updateProfile));
+  .put(isLoggedIn, validateUser, updateProfile);
 // .delete(deleteProfile);
 
 module.exports = router;
